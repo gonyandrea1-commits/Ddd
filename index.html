@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Монополія — браузерна гра</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <h1>Монополія</h1>
+      <p>Повна браузерна версія для 2–4 гравців.</p>
+    </header>
+
+    <section class="setup" id="setup">
+      <h2>Налаштування гри</h2>
+      <div class="setup__controls">
+        <div class="setup__row">
+          <label for="player-name">Імʼя гравця</label>
+          <input id="player-name" type="text" placeholder="Напр. Оля" />
+        </div>
+        <div class="setup__row">
+          <label for="player-color">Колір фішки</label>
+          <input id="player-color" type="color" value="#ff6b6b" />
+        </div>
+        <button id="add-player" class="primary">Додати гравця</button>
+      </div>
+      <div class="setup__players">
+        <h3>Гравці</h3>
+        <ul id="player-list" class="player-list"></ul>
+      </div>
+      <button id="start-game" class="primary" disabled>Почати гру</button>
+    </section>
+
+    <main class="game" id="game" hidden>
+      <div class="board" id="board"></div>
+
+      <div class="center-panel">
+        <section class="turn" id="turn">
+          <h2>Хід гравця</h2>
+          <div class="turn__info">
+            <p><strong>Поточний:</strong> <span id="current-player">—</span></p>
+            <p><strong>Гроші:</strong> <span id="current-money">—</span></p>
+            <p><strong>Кубики:</strong> <span id="dice-result">—</span></p>
+          </div>
+          <div class="turn__actions" id="turn-actions"></div>
+        </section>
+
+        <section class="players" id="players">
+          <h2>Стан гравців</h2>
+          <div id="players-status" class="players-status"></div>
+        </section>
+
+        <section class="log" id="log">
+          <h2>Журнал</h2>
+          <div class="log__entries" id="log-entries"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
