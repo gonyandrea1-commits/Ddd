@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tech Calc OCR">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#4a69bd">
+<meta name="description" content="Technician calculator with OCR for fast form filling and report generation.">
+<title>Technician Calculator v4.4 OCR</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=20260416-9">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="app.js?v=20260416-9" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#appMain">Skip to Report Builder</a>
+<div class="container">
+ <header class="header">
+  <div class="header-topline">
+   <span data-ui-key="appTitle">Technician Calculator v4.4 OCR</span>
+   <button class="header-icon-btn" id="refreshAppBtn" type="button" aria-label="Clean cache" title="Clean cache">&#8635;</button>
+  </div>
+  <span class="header-subtitle" data-ui-key="appSubtitle">Fast field capture, stackable code tracking, and copy-ready technician notes.</span>
+ </header>
+ <div class="summary-bar">
+  <div class="summary-items">
+   <div class="summary-card">
+    <span class="summary-label" data-ui-key="summaryWeekLabel">This Week</span>
+    <span class="summary-value" id="weeklyTotal">$0.00</span>
+    <span class="summary-meta" id="weeklyRange">Monday start</span>
+   </div>
+   <div class="summary-card">
+    <span class="summary-label" data-ui-key="summaryMonthLabel">This Month</span>
+    <span class="summary-value" id="monthlyTotal">$0.00</span>
+    <span class="summary-meta" id="monthlyRange">Current month</span>
+   </div>
+  </div>
+  <div class="summary-actions">
+   <button class="btn-info" id="earningsInfoBtn" type="button" data-ui-key="infoButton">Info by Days</button>
+  </div>
+ </div>
+ <div class="install-banner" id="installBanner">
+  <span id="installHint" data-ui-key="installHint">Install the app on your phone using the button below.</span>
+  <button id="installBtn" type="button" data-ui-key="installButton">Install App</button>
+ </div>
+ <main id="appMain">
+  <div class="controls-box">
+   <div class="control-group">
+    <label for="ocrImageInput" data-ui-key="ocrImageLabel">OCR Image:</label>
+    <input type="file" id="ocrImageInput" class="ocr-file" name="ocrImage" accept="image/*" aria-describedby="ocrStatus">
+   </div>
+   <div class="ocr-status" id="ocrStatus" role="status" aria-live="polite" data-ui-key="ocrStatusIdle">OCR: upload an image and the fields will fill automatically.</div>
+   <div class="control-group">
+    <label for="techName" data-ui-key="techNameLabel">TECHNAME:</label>
+    <input type="text" id="techName" class="input-field" name="techName" autocomplete="off" spellcheck="false" data-placeholder-key="techNamePlaceholder" placeholder="Tech name...">
+   </div>
+   <div class="control-group">
+    <label for="crissId" data-ui-key="crissIdLabel">Criss ID:</label>
+    <input type="text" id="crissId" class="input-field" name="crissId" autocomplete="off" spellcheck="false" data-placeholder-key="crissIdPlaceholder" placeholder="Criss ID...">
+   </div>
+   <div class="control-group">
+    <label for="callId" data-ui-key="callIdLabel">Call ID:</label>
+    <input type="text" id="callId" class="input-field" name="callId" autocomplete="off" spellcheck="false" inputmode="numeric" data-placeholder-key="callIdPlaceholder" placeholder="Enter call ID...">
+   </div>
+   <div class="control-group">
+    <label for="customerName" data-ui-key="customerLabel">Customer:</label>
+    <input type="text" id="customerName" class="input-field" name="customerName" autocomplete="name" data-placeholder-key="customerPlaceholder" placeholder="First and last name...">
+   </div>
+   <div class="control-group">
+    <label for="fullAddress" data-ui-key="addressLabel">Address:</label>
+    <textarea id="fullAddress" class="input-field" name="fullAddress" autocomplete="street-address" data-placeholder-key="addressPlaceholder" placeholder="Enter customer address..."></textarea>
+   </div>
+   <div class="control-group">
+    <label for="phoneNumber" data-ui-key="phoneLabel">Phone:</label>
+    <input type="tel" id="phoneNumber" class="input-field" name="phoneNumber" autocomplete="tel" inputmode="tel" data-placeholder-key="phonePlaceholder" placeholder="Phone number...">
+   </div>
+   <div class="control-group">
+    <label for="btnNumber" data-ui-key="btnLabel">BTN:</label>
+    <input type="text" id="btnNumber" class="input-field" name="btnNumber" autocomplete="off" spellcheck="false" inputmode="numeric" data-placeholder-key="btnPlaceholder" placeholder="BTN number...">
+   </div>
+   <div class="checkbox-group">
+    <label class="checkbox-item"><input type="checkbox" id="unbreakableCheck" name="unbreakableCheck"><span data-ui-key="unbreakableLabel">Unbreakable</span></label>
+    <label class="checkbox-item"><input type="checkbox" id="wholeHomeCheck" name="wholeHomeCheck"><span data-ui-key="wholeHomeLabel">Whole Home WiFi</span></label>
+    <label class="checkbox-item"><input type="checkbox" id="ibobCheck" name="ibobCheck"><span data-ui-key="ibobLabel">IBOB</span></label>
+    <label class="checkbox-item"><input type="checkbox" id="ontWallMountedCheck" name="ontWallMountedCheck" checked><span data-ui-key="ontMountedLabel">ONT mounted on the wall</span></label>
+   </div>
+   <div class="control-group">
+    <label for="eeroQty" data-ui-key="eeroQtyLabel">Eeros Qty:</label>
+    <select id="eeroQty" class="eero-select" name="eeroQty" autocomplete="off"></select>
+   </div>
+   <div class="control-group">
+    <label for="speedTier" data-ui-key="speedTierLabel">Speed Test:</label>
+    <select id="speedTier" class="speed-select" name="speedTier" required autocomplete="off"></select>
+   </div>
+  </div>
+  <div class="table-wrapper">
+   <table aria-label="Selected calculator codes">
+    <thead>
+     <tr>
+      <th class="col-del" data-ui-key="tableDelete">X</th>
+      <th data-ui-key="tableCode">Code</th>
+      <th class="col-qty-wrap" data-ui-key="tableQty">Qty</th>
+      <th class="col-total" data-ui-key="tableTotal">Total</th>
+     </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+    <tfoot>
+     <tr>
+      <td colspan="3" class="grand-total-label" data-ui-key="grandTotalLabel">Grand Total:</td>
+      <td id="grandTotal" class="total-cell grand-total-value">$0.00</td>
+     </tr>
+    </tfoot>
+   </table>
+  </div>
+  <div class="action-buttons">
+   <button class="main add" id="addRowBtn" type="button" data-ui-key="addRowButton">Add Row</button>
+   <button class="main remove" id="resetDataBtn" type="button" data-ui-key="resetButton">Reset Data</button>
+  </div>
+  <div class="report-area">
+   <label id="reportLabel" for="resultText" data-ui-key="reportLabel">Generated Report</label>
+   <textarea id="resultText" readonly name="resultText" aria-describedby="copyStatus" data-placeholder-key="reportPlaceholder" placeholder="The report will appear here..."></textarea>
+   <div class="copy-buttons-row">
+    <button class="btn-copy btn-full" id="copyFullBtn" type="button" data-copy-type="full" data-ui-key="copyFullButton">Copy Full</button>
+    <button class="btn-copy btn-mtpn" id="copyMtpnBtn" type="button" data-copy-type="mtpn" data-ui-key="copyMtpnButton">Copy MTPN</button>
+    <button class="btn-copy btn-f012" id="copyHeaderF012Btn" type="button" data-copy-type="headerf012" data-ui-key="copyF012Button" style="display:none;">Copy F012</button>
+    <button class="btn-copy btn-f011" id="copyHeaderF011Btn" type="button" data-copy-type="headerf011" data-ui-key="copyF011Button" style="display:none;">Copy F011</button>
+    <button class="btn-copy btn-pd" id="copyPdBtn" type="button" data-copy-type="pd" data-ui-key="copyPdButton" style="display:none;">Copy PD</button>
+   </div>
+   <p id="copyStatus" class="sr-only" aria-live="polite"></p>
+  </div>
+ </main>
+ <footer class="footer" data-ui-key="footerText">Created by Andrii Nazarevych</footer>
+</div>
+<div class="earnings-modal" id="earningsModal" aria-hidden="true">
+ <div class="earnings-panel" role="dialog" aria-modal="true" aria-labelledby="earningsPanelTitle">
+  <div class="earnings-panel-header">
+   <div class="earnings-panel-title" id="earningsPanelTitle" data-ui-key="earningsModalTitle">Earnings by Days</div>
+   <button class="earnings-close" id="earningsCloseBtn" type="button" aria-label="Close info">X</button>
+  </div>
+  <div id="earningsInfoContent"></div>
+ </div>
+</div>
+<input type="file" id="earningsImportInput" accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
+</body>
+</html>
