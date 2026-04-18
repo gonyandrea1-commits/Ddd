@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<baza>
+  <ui>
+    <text key="appTitle">Technician Calculator v4.4 OCR</text>
+    <text key="appSubtitle">Fast field capture, stackable code tracking, and copy-ready technician notes.</text>
+    <text key="summaryWeekLabel">This Week</text>
+    <text key="summaryMonthLabel">This Month</text>
+    <text key="infoButton">Info</text>
+    <text key="installHint">Install the app on your phone using the button below.</text>
+    <text key="installButton">Install App</text>
+    <text key="ocrImageLabel">OCR Image:</text>
+    <text key="ocrStatusIdle">OCR: upload an image and the fields will fill automatically.</text>
+    <text key="ocrStatusLoading">OCR: loading...</text>
+    <text key="ocrStatusDone">OCR: done, fields filled</text>
+    <text key="ocrStatusNotFound">OCR: text was read, but required fields were not found</text>
+    <text key="ocrStatusError">OCR: image reading error</text>
+    <text key="techNameLabel">TECHNAME:</text>
+    <text key="crissIdLabel">Criss ID:</text>
+    <text key="callIdLabel">Call ID:</text>
+    <text key="customerLabel">Customer:</text>
+    <text key="addressLabel">Address:</text>
+    <text key="phoneLabel">Phone:</text>
+    <text key="btnLabel">BTN:</text>
+    <text key="unbreakableLabel">Unbreakable</text>
+    <text key="wholeHomeLabel">Whole Home WiFi</text>
+    <text key="ibobLabel">IBOB</text>
+    <text key="ontMountedLabel">ONT mounted on the wall</text>
+    <text key="eeroQtyLabel">Eeros Qty:</text>
+    <text key="speedTierLabel">Speed Test:</text>
+    <text key="tableDelete">X</text>
+    <text key="tableCode">Code</text>
+    <text key="tableQty">Qty</text>
+    <text key="tableTotal">Total</text>
+    <text key="grandTotalLabel">Grand Total:</text>
+    <text key="addRowButton">Add Row</text>
+    <text key="resetButton">Reset Data</text>
+    <text key="reportLabel">Generated Report</text>
+    <text key="copyFullButton">Copy Full</text>
+    <text key="copyMtpnButton">Copy MTPN</text>
+    <text key="copyF012Button">Copy F012</text>
+    <text key="copyF011Button">Copy F011</text>
+    <text key="copyPdButton">Copy PD</text>
+    <text key="footerText">Created by Andrii Nazarevych</text>
+    <text key="earningsModalTitle">Earnings Info</text>
+    <text key="earningsEmpty">No saved earnings yet. Use Copy MTPN and the daily totals will appear here.</text>
+    <text key="earningsAddTitle">Add client manually</text>
+    <text key="earningsDatePlaceholder">Date</text>
+    <text key="earningsNamePlaceholder">Client name</text>
+    <text key="earningsAmountPlaceholder">Amount</text>
+    <text key="earningsTabDays">By Days</text>
+    <text key="earningsTabMonths">By Months</text>
+    <text key="earningsExportButton">Download Excel</text>
+    <text key="earningsExportDone">Earnings file downloaded.</text>
+    <text key="earningsCodesEmpty">No codes saved</text>
+    <text key="earningsMonthMeta">{{days}} days, {{jobs}} jobs</text>
+    <text key="earningsWeekArchived">Detailed jobs were archived for this week.</text>
+    <text key="earningsBackButton">Back</text>
+    <text key="earningsAddButton">Add Client</text>
+    <text key="earningsSaveButton">Save</text>
+    <text key="earningsDeleteButton">Delete</text>
+    <text key="earningsDeleteConfirm">Delete "{{name}}" and amount?</text>
+    <text key="earningsDayAddButton">Add to Day</text>
+    <text key="speedSelectPlaceholder">Select speed...</text>
+    <text key="codeSelectPlaceholder">Select...</text>
+    <text key="f012Placeholder">Variant...</text>
+    <text key="techNamePlaceholder">Tech name...</text>
+    <text key="crissIdPlaceholder">Criss ID...</text>
+    <text key="callIdPlaceholder">Enter call ID...</text>
+    <text key="customerPlaceholder">First and last name...</text>
+    <text key="addressPlaceholder">Enter customer address...</text>
+    <text key="phonePlaceholder">Phone number...</text>
+    <text key="btnPlaceholder">BTN number...</text>
+    <text key="reportPlaceholder">The report will appear here...</text>
+    <text key="copyFailed">Copy failed. Please try again.</text>
+    <text key="copyFailedAlert">Couldn't copy the text.</text>
+    <text key="copySavedNoCustomer">Copied, but customer name is empty so amount was not saved.</text>
+    <text key="copyFullStatus">Copy Full copied to clipboard.</text>
+    <text key="copyMtpnStatus">Copy MTPN copied to clipboard.</text>
+    <text key="copyF012Status">Copy F012 copied to clipboard.</text>
+    <text key="copyF011Status">Copy F011 copied to clipboard.</text>
+    <text key="copyPdStatus">Copy PD copied to clipboard.</text>
+    <text key="pdAddressLabel">PD Address:</text>
+    <text key="pdAddressPlaceholder">Enter PD address...</text>
+    <text key="pdMilesLabel">PD Miles:</text>
+    <text key="pdMilesPlaceholder">Enter miles...</text>
+    <text key="installIosHint">On iPhone, open Share and choose Add to Home Screen.</text>
+    <text key="resetConfirm">Reset all data?</text>
+  </ui>
+  <codes>
+    <code id="F014-1" price="100" desc="SOC" />
+    <code id="F006" price="20" desc="Installed Aerial Drop" />
+    <code id="F007" price="30" desc="splice drope" />
+    <code id="F031" price="0.48" desc="Installed MDU DROP" />
+    <code id="F014-6" price="30" desc="removed old ont" />
+    <code id="F014-7" price="16" desc="Removed copper lines" />
+    <code id="F012" price="28" desc="Time Spent On Issue" />
+    <code id="F011" price="20" desc="Trip charge, 1st attempt CX not at home" />
+    <code id="F014-10" price="0.4" desc="Placed in UG conduit" />
+    <code id="TL-Footage" price="0" desc="Temporary line Footage" />
+    <code id="F008" price="46" desc="TROUBLE TICKET" />
+    <code id="F009" price="30" desc="REFER TO MAINTENANCE" />
+    <code id="F010" price="20" desc="TROUBLE FOLLOW-UP" />
+    <code id="1-F014-5" price="30" desc="Run ADDITIONAL lines" />
+    <code id="2-F014-5" price="14" desc="jacks without existing wiring" />
+    <code id="TR" price="50" desc="Training daily" />
+    <code id="PD" price="100" desc="Per Diem" />
+  </codes>
+  <speedOptions>
+    <option value="200">200 Mbps</option>
+    <option value="500">500 Mbps</option>
+    <option value="1000">1000 Mbps</option>
+    <option value="2000">2000 Mbps</option>
+    <option value="5000">5000 Mbps</option>
+    <option value="7000">7000 Mbps</option>
+  </speedOptions>
+  <eeroOptions>
+    <option value="1">(1) 7 pro</option>
+    <option value="2">(2) 7 pro</option>
+    <option value="3">(3) 7 pro</option>
+    <option value="1-max">(1) 7 max</option>
+    <option value="2-max">(2) 7 max</option>
+  </eeroOptions>
+  <f012Options>
+    <option value="4" label="WallFish" service="WallFish" />
+    <option value="1" label="YouTube TV" service="YouTube TV" />
+    <option value="2" label="DIRECTV" service="DIRECTV" />
+    <option value="3" label="YT &amp; DIRECTV" service="YouTube TV &amp; DIRECTV" />
+  </f012Options>
+  <f011Options>
+    <option value="1" label="F011 (1)"><![CDATA[Why Missed: Cx not at home, Made 1 attempt;
+Supervisor ;
+Direction Provided: Made 1 attempt;
+Next Action: Will try again later
+F011 (1) Trip charge, 1st attempt CX not at home;]]></option>
+    <option value="2" label="F011 cancel job (2)"><![CDATA[Why Missed: 1st attempt - Cx not at home, No answer text/calls. Will try again later
+
+2nd attempt - Cx cancel the order Supervisor .
+
+Direction Provided: Follow procedure Cx want to cancel
+
+Next Action: Cx cancel the order, job removed from my list
+
+F011 (2) Trip charge, 1st attempt CX not at home;]]></option>
+    <option value="3" label="F011 Reschedule appointment (2)"><![CDATA[Why Missed: Customer requested to reschedule the appointment.
+Supervisor;
+Direction Provided: Reschedule appointment per customer request.
+Next Action: Appointment needs to be rescheduled for a new date.
+F011 (2) Reschedule appointment;]]></option>
+  </f011Options>
+  <report>
+    <text key="headerDatePrefix">DATE:</text>
+    <text key="headerTechPrefix">TECHNAME: </text>
+    <text key="headerCrissPrefix">Criss ID: </text>
+    <text key="headerCallPrefix">CALL ID:</text>
+    <text key="headerCustomerPrefix">CUSTOMER: </text>
+    <text key="headerPhonePrefix">PHONE: </text>
+    <text key="headerBtnPrefix">BTN: </text>
+    <text key="headerAddressPrefix">FULL ADDRESS: </text>
+    <text key="dropPrefix">Drop Length: </text>
+    <text key="aerialDetail">Aerial footage {{ft}} ft, {{qty}} spans</text>
+    <text key="mduDetail">MDU {{qty}} ft</text>
+    <text key="conduitDetail">conduit {{qty}} ft</text>
+    <text key="tempLineDetail">temp line {{qty}} ft</text>
+    <text key="swcSuffix"> , SWC ticket created;</text>
+    <text key="sketchUploaded">Sketch Uploaded: yes;</text>
+    <text key="ontMountedTemplate">ONT mounted on the wall:{{value}};</text>
+    <text key="equipmentPlacementTemplate">Equipment Placement: FRX 523 -office, EERO {{eeroModel}};</text>
+    <text key="speedTestTemplate">Speed Test Up/Down: {{speedResult}};</text>
+    <text key="ibobLine">IBOB: yes;</text>
+    <text key="unbreakableLine">Unbreakable: yes;</text>
+    <text key="wholeHomeLine">Whole Home WiFi: yes;</text>
+    <text key="cat6RunsBase">Cat6 Runs: run 1 included Ethernet line</text>
+    <text key="cat6RunsExtra"> and extra {{count}} line{{plural}}</text>
+    <text key="siliconeLine">Silicone at Entry: Yes;</text>
+    <text key="eerosTemplate">Eeros: ({{eeroQty}}) {{eeroModel}};</text>
+    <text key="verifiedTemplate">Verified Service With: {{cust}};</text>
+    <text key="outOfScopeTemplate">Out-of-Scope Work documented: {{items}};</text>
+    <text key="additionalComments">Additional Comments: Installed main eero, checked connectivity.</text>
+    <text key="stackableHeader">Stackable codes used :</text>
+    <text key="outScopeNoMount">the customer did not want to mount the ONT on the wall</text>
+    <text key="outScopeRemovedOnt">removed old ont</text>
+    <text key="outScopeF012">it took me {{qty}} hours to connect customers {{service}}</text>
+    <text key="outScopeExtraLines">Installed ({{qty}}) additional lines per CX request</text>
+    <text key="outScopeJacks">({{qty}}) jacks without existing wiring</text>
+    <text key="f006Stackable">{{code}} ({{qty}}) Installed Aerial Drop {{qty}} Spans;</text>
+    <text key="genericStackable">{{code}} ({{qty}}) {{desc}};</text>
+    <text key="f012Stackable">F012 ({{qty}}) {{service}}, time spent on issue:{{qty}}hr, Time on job {{timeOnJob}}:40hr;</text>
+    <text key="f011Summary1">Trip charge, 1st attempt CX not at home;</text>
+    <text key="f011Summary2">Trip charge, cancel job;</text>
+    <text key="f011Summary3">Reschedule appointment;</text>
+    <text key="f011Stackable">F011 ({{variant}}) {{summary}}</text>
+    <text key="extraLinesStackable">1-F014-5 ({{qty}}) Installed ({{qty}}) additional lines per CX request;</text>
+    <text key="jacksStackable">2-F014-5 ({{qty}}) jacks without existing wiring;</text>
+  </report>
+</baza>
