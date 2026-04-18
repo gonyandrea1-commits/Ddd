@@ -1,4 +1,4 @@
-const ASSET_VERSION = "20260418-1";
+const ASSET_VERSION = "20260418-2";
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 const dateFmt = new Intl.DateTimeFormat("en-US");
 
@@ -8,9 +8,9 @@ let speedOffsets = { up: 0, down: 0 };
 let installPrompt = null;
 
 const TROUBLE_OPTIONS = [
-  { value: "eero", label: "Заміна eero", report: "replaced Eero" },
-  { value: "ont", label: "Заміна ONT", report: "replaced ONT" },
-  { value: "cable", label: "Заміна кабеля", report: "replaced cable" }
+  { value: "eero", label: "Заміна eero", outScope: "Replaced the Eero" },
+  { value: "ont", label: "Заміна ONT", outScope: "Replaced the ONT" },
+  { value: "cable", label: "Заміна кабеля", outScope: "Replaced the cable" }
 ];
 
 const $ = id => document.getElementById(id);
@@ -72,8 +72,13 @@ function troubleMarkup(id) {
 function getTroubleValues(id) {
   return [...document.querySelectorAll(`#trouble-${id} input[type="checkbox"]:checked`)].map(input => input.value);
 }
-function troubleReport(values = []) {
-  return values.map(v => TROUBLE_OPTIONS.find(o => o.value === v)?.report).filter(Boolean).join(", ");
+
+function troubleOutScope(values = []) {
+  const items = values.map(v => TROUBLE_OPTIONS.find(o => o.value === v)?.outScope).filter(Boolean);
+  if (!items.length) return "";
+  if (items.length === 1) return `${items[0]}.`;
+  if (items.length === 2) return `${items[0]} and ${items[1].replace(/^Replaced /, "")}.`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1].replace(/^Replaced /, "")}.`;
 }
 
 function addRow(saved = {}) {
@@ -159,16 +164,14 @@ function tici() {
   return `TICI ${pair()} TICI ${pair()}`;
 }
 
-function generateReport() {
-  ["callId", "customerName", "phoneNumber", "btnNumber", "fullAddress", "speedTier"].forEach(id => $(id)?.classList.toggle("empty", !val(id)));
-  const eeroText = $("eeroQty").selectedOptions[0]?.textContent || "";
-  const eeroQty = (eeroText.match(/\((\d+)\)/) || [])[1] || "";
-  const eeroModel = eeroText.toLowerCase().includes("max") ? "7 max" : "7 pro";
-  const speed = val("speedTier");
-  const speedResult = speed ? `${Number(speed) + speedOffsets.up}/${Number(speed) + speedOffsets.down}` : "REQUIRED";
+function buildDropAndStack(allRows) {
+  let dropTotal = 0;
+  const details = [];
+  const stack = [];
+  const out = [];
+  const troubleOut = [];
 
-  let dropTotal = 0, details = [], stack = [], out = [], troubleLines = [];
-  rows().forEach(r => {
+  allRows.forEach(r => {
     const desc = cfg.codes[r.code]?.desc || "";
     if (r.code === "F006") { dropTotal += r.qty * 100; details.push(tpl(rep("aerialDetail", "Aerial footage {{ft}} ft, {{qty}} spans"), { ft: r.qty * 100, qty: r.qty })); }
     else if (r.code === "F031") { dropTotal += r.qty; details.push(tpl(rep("mduDetail", "MDU {{qty}} ft"), { qty: r.qty })); }
@@ -185,9 +188,9 @@ function generateReport() {
     } else if (r.code === "F006") {
       stack.push(tpl(rep("f006Stackable", "{{code}} ({{qty}}) Installed Aerial Drop {{qty}} Spans;"), { code: r.code, qty: r.qty }));
     } else if (r.code === "F008") {
-      const troubleText = troubleReport(r.trouble);
-      stack.push(`F008 (${r.qty}) TROUBLE TICKET${troubleText ? `; Trouble ticket work: ${troubleText}` : ""};`);
-      if (troubleText) troubleLines.push(`Trouble ticket work: ${troubleText};`);
+      stack.push(`F008 (${r.qty}) TROUBLE TICKET;`);
+      const troubleText = troubleOutScope(r.trouble);
+      if (troubleText) troubleOut.push(troubleText);
     } else {
       stack.push(tpl(rep("genericStackable", "{{code}} ({{qty}}) {{desc}};"), { code: r.code, qty: r.qty, desc }));
     }
@@ -195,15 +198,35 @@ function generateReport() {
     if (r.code === "1-F014-5") out.push(tpl(rep("outScopeExtraLines"), { qty: r.qty }));
     if (r.code === "2-F014-5") out.push(tpl(rep("outScopeJacks"), { qty: r.qty }));
   });
+
+  const dropLine = `${rep("dropPrefix", "Drop Length: ")}${dropTotal};` + (details.length ? ` ${details.join(", ")}` : "");
+  return { dropLine, stack, out, troubleOut };
+}
+
+function generateReport() {
+  ["callId", "customerName", "phoneNumber", "btnNumber", "fullAddress", "speedTier"].forEach(id => $(id)?.classList.toggle("empty", !val(id)));
+  const allRows = rows();
+  const hasTroubleTicket = allRows.some(r => r.code === "F008");
+  const eeroText = $("eeroQty").selectedOptions[0]?.textContent || "";
+  const eeroQty = (eeroText.match(/\((\d+)\)/) || [])[1] || "";
+  const eeroModel = eeroText.toLowerCase().includes("max") ? "7 max" : "7 pro";
+  const speed = val("speedTier");
+  const speedResult = speed ? `${Number(speed) + speedOffsets.up}/${Number(speed) + speedOffsets.down}` : "REQUIRED";
+  const { dropLine, stack, out, troubleOut } = buildDropAndStack(allRows);
+
+  if (hasTroubleTicket) {
+    const outScopeText = troubleOut.length ? [...new Set(troubleOut)].join(" ") : "NA";
+    $("resultText").value = `${buildHeader()}\n\n${dropLine}\n${tici()};\nONT mounted on the wall: NA\nEquipment Placement: NA\nSpeed Test Up/Down: ${speedResult}\nIBOB: NA\nCat6 Runs: NA\nSilicone at Entry: Yes\nEeros: NA\nUnbreakable: NA\nWhole Home WiFi: NA\nVerified Service With: ${val("customerName").toUpperCase()}\nOut-of-Scope Work Documented: ${outScopeText}\nAdditional Comments: all works good\nCustomer educated\n\n${rep("stackableHeader", "Stackable codes used :")}\n${stack.join("\n")}`.trim();
+    return;
+  }
+
   if (!checked("ontWallMountedCheck")) out.push(rep("outScopeNoMount", "the customer did not want to mount the ONT on the wall"));
   const addItems = [];
   if (checked("ibobCheck")) addItems.push(rep("ibobLine", "IBOB: yes;"));
   if (checked("unbreakableCheck")) addItems.push(rep("unbreakableLine", "Unbreakable: yes;"));
   if (checked("wholeHomeCheck")) addItems.push(rep("wholeHomeLine", "Whole Home WiFi: yes;"));
-  let dropLine = `${rep("dropPrefix", "Drop Length: ")}${dropTotal};` + (details.length ? " " + details.join(", ") : "");
   const outLine = out.filter(Boolean).length ? tpl(rep("outOfScopeTemplate", "Out-of-Scope Work documented: {{items}};"), { items: [...new Set(out)].join(", ") }) : "";
-  const troubleBlock = troubleLines.length ? `${[...new Set(troubleLines)].join("\n")}\n` : "";
-  $("resultText").value = `${buildHeader()}\n\n${dropLine}\n${tici()};\n${tpl(rep("ontMountedTemplate", "ONT mounted on the wall:{{value}};"), { value: checked("ontWallMountedCheck") ? "yes" : "no" })}\n${tpl(rep("equipmentPlacementTemplate"), { eeroModel })}\n${tpl(rep("speedTestTemplate"), { speedResult })}\n${addItems.join("\n")}\n${rep("cat6RunsBase", "Cat6 Runs: run 1 included Ethernet line")};\n${troubleBlock}${rep("siliconeLine", "Silicone at Entry: Yes;")}\n${tpl(rep("eerosTemplate"), { eeroQty, eeroModel })}\n${tpl(rep("verifiedTemplate"), { cust: val("customerName").toUpperCase() })}\n${outLine}\n${rep("additionalComments", "Additional Comments: Installed main eero, checked connectivity.")}\n\n${rep("stackableHeader", "Stackable codes used :")}\n${stack.join("\n")}`.trim();
+  $("resultText").value = `${buildHeader()}\n\n${dropLine}\n${tici()};\n${tpl(rep("ontMountedTemplate", "ONT mounted on the wall:{{value}};"), { value: checked("ontWallMountedCheck") ? "yes" : "no" })}\n${tpl(rep("equipmentPlacementTemplate"), { eeroModel })}\n${tpl(rep("speedTestTemplate"), { speedResult })}\n${addItems.join("\n")}\n${rep("cat6RunsBase", "Cat6 Runs: run 1 included Ethernet line")};\n${rep("siliconeLine", "Silicone at Entry: Yes;")}\n${tpl(rep("eerosTemplate"), { eeroQty, eeroModel })}\n${tpl(rep("verifiedTemplate"), { cust: val("customerName").toUpperCase() })}\n${outLine}\n${rep("additionalComments", "Additional Comments: Installed main eero, checked connectivity.")}\n\n${rep("stackableHeader", "Stackable codes used :")}\n${stack.join("\n")}`.trim();
 }
 
 function saveState() {
