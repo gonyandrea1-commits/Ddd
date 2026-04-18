@@ -1,0 +1,21 @@
+{
+  "id": "./index.html",
+  "name": "Tech Calculator OCR",
+  "short_name": "Tech Calc",
+  "description": "Technician calculator with OCR support.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1e3c72",
+  "theme_color": "#4a69bd",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
