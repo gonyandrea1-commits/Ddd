@@ -1,10 +1,10 @@
-const CACHE_NAME = "tech-calc-ocr-v29";
+const CACHE_NAME = "tech-calc-ocr-v30";
 const APP_ASSETS = [
   "./",
   "index.html",
   "styles.css?v=20260416-9",
-  "app.js?v=20260418-1",
-  "baza.xml?v=20260418-1",
+  "app.js?v=20260418-2",
+  "baza.xml?v=20260418-2",
   "manifest.json",
   "icons/icon.svg"
 ];
