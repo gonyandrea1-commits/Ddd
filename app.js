@@ -1,4 +1,4 @@
-const ASSET_VERSION = "20260416-9";
+const ASSET_VERSION = "20260418-1";
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 const dateFmt = new Intl.DateTimeFormat("en-US");
 
@@ -6,6 +6,12 @@ let cfg = { ui: {}, report: {}, codes: {}, codeOrder: [], speeds: [], eeros: [],
 let rowCounter = 0;
 let speedOffsets = { up: 0, down: 0 };
 let installPrompt = null;
+
+const TROUBLE_OPTIONS = [
+  { value: "eero", label: "Заміна eero", report: "replaced Eero" },
+  { value: "ont", label: "Заміна ONT", report: "replaced ONT" },
+  { value: "cable", label: "Заміна кабеля", report: "replaced cable" }
+];
 
 const $ = id => document.getElementById(id);
 const val = id => ($(id)?.value || "").trim();
@@ -56,6 +62,19 @@ function rowOptions() {
 }
 function f012Options() { return cfg.f012.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join(""); }
 function f011Options() { return cfg.f011.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join(""); }
+function troubleMarkup(id) {
+  return `<div id="trouble-${id}" class="trouble-options" style="display:none;margin-top:8px;padding:8px;border:1px solid #d9e1f0;border-radius:10px;background:#f8fbff;">
+    <div style="font-size:12px;font-weight:800;color:#244c8d;margin-bottom:6px;">Що зробив:</div>
+    ${TROUBLE_OPTIONS.map(o => `<label style="display:flex;align-items:center;gap:7px;margin:5px 0;font-size:13px;font-weight:700;"><input type="checkbox" id="trouble-${esc(o.value)}-${id}" data-trouble-row="${id}" value="${esc(o.value)}">${esc(o.label)}</label>`).join("")}
+  </div>`;
+}
+
+function getTroubleValues(id) {
+  return [...document.querySelectorAll(`#trouble-${id} input[type="checkbox"]:checked`)].map(input => input.value);
+}
+function troubleReport(values = []) {
+  return values.map(v => TROUBLE_OPTIONS.find(o => o.value === v)?.report).filter(Boolean).join(", ");
+}
 
 function addRow(saved = {}) {
   rowCounter++;
@@ -65,11 +84,13 @@ function addRow(saved = {}) {
   tr.innerHTML = `<td class="col-del"><button class="btn-del" type="button" data-del="${id}">X</button></td>
 <td><select class="code-select" id="select-${id}" data-id="${id}">${rowOptions()}</select>
 <div id="sub12-${id}" style="display:none;margin-top:6px"><select class="code-select" id="f012-${id}">${f012Options()}</select></div>
-<div id="sub11-${id}" style="display:none;margin-top:6px"><select class="code-select" id="f011-${id}">${f011Options()}</select></div></td>
+<div id="sub11-${id}" style="display:none;margin-top:6px"><select class="code-select" id="f011-${id}">${f011Options()}</select></div>
+${troubleMarkup(id)}</td>
 <td class="col-qty-wrap"><div class="qty-controls"><button class="qty-btn qty-minus" type="button" data-qty="${id}" data-delta="-1">-</button><input class="qty-input" id="qty-${id}" type="number" min="0" step="1" value="${esc(saved.qty || 1)}"><button class="qty-btn qty-plus" type="button" data-qty="${id}" data-delta="1">+</button></div></td>
 <td class="col-total total-cell" id="total-${id}" data-total="0">$0.00</td>`;
   $("tableBody").appendChild(tr);
   if (saved.code) $(`select-${id}`).value = saved.code;
+  (saved.trouble || []).forEach(v => { const box = $(`trouble-${v}-${id}`); if (box) box.checked = true; });
   updateRow(id, false);
 }
 
@@ -79,6 +100,8 @@ function updateRow(id, save = true) {
   const total = (cfg.codes[code]?.price || 0) * qty;
   $(`sub12-${id}`).style.display = code === "F012" ? "block" : "none";
   $(`sub11-${id}`).style.display = code === "F011" ? "block" : "none";
+  const trouble = $(`trouble-${id}`);
+  if (trouble) trouble.style.display = code === "F008" ? "block" : "none";
   $(`total-${id}`).dataset.total = String(total);
   $(`total-${id}`).textContent = fmt(total);
   calculateTotal();
@@ -98,7 +121,14 @@ function rows() {
   return [...document.querySelectorAll("#tableBody tr")].map(tr => {
     const id = tr.id.split("-")[1];
     const code = $(`select-${id}`)?.value || "";
-    return { id, code, qty: Number($(`qty-${id}`)?.value || 0), f012: $(`f012-${id}`)?.value || "", f011: $(`f011-${id}`)?.value || "" };
+    return {
+      id,
+      code,
+      qty: Number($(`qty-${id}`)?.value || 0),
+      f012: $(`f012-${id}`)?.value || "",
+      f011: $(`f011-${id}`)?.value || "",
+      trouble: getTroubleValues(id)
+    };
   }).filter(r => r.code);
 }
 
@@ -137,7 +167,7 @@ function generateReport() {
   const speed = val("speedTier");
   const speedResult = speed ? `${Number(speed) + speedOffsets.up}/${Number(speed) + speedOffsets.down}` : "REQUIRED";
 
-  let dropTotal = 0, details = [], stack = [], out = [];
+  let dropTotal = 0, details = [], stack = [], out = [], troubleLines = [];
   rows().forEach(r => {
     const desc = cfg.codes[r.code]?.desc || "";
     if (r.code === "F006") { dropTotal += r.qty * 100; details.push(tpl(rep("aerialDetail", "Aerial footage {{ft}} ft, {{qty}} spans"), { ft: r.qty * 100, qty: r.qty })); }
@@ -154,6 +184,10 @@ function generateReport() {
       stack.push(`F011 (${variant}) ${getF011(variant).body || desc};`);
     } else if (r.code === "F006") {
       stack.push(tpl(rep("f006Stackable", "{{code}} ({{qty}}) Installed Aerial Drop {{qty}} Spans;"), { code: r.code, qty: r.qty }));
+    } else if (r.code === "F008") {
+      const troubleText = troubleReport(r.trouble);
+      stack.push(`F008 (${r.qty}) TROUBLE TICKET${troubleText ? `; Trouble ticket work: ${troubleText}` : ""};`);
+      if (troubleText) troubleLines.push(`Trouble ticket work: ${troubleText};`);
     } else {
       stack.push(tpl(rep("genericStackable", "{{code}} ({{qty}}) {{desc}};"), { code: r.code, qty: r.qty, desc }));
     }
@@ -168,14 +202,15 @@ function generateReport() {
   if (checked("wholeHomeCheck")) addItems.push(rep("wholeHomeLine", "Whole Home WiFi: yes;"));
   let dropLine = `${rep("dropPrefix", "Drop Length: ")}${dropTotal};` + (details.length ? " " + details.join(", ") : "");
   const outLine = out.filter(Boolean).length ? tpl(rep("outOfScopeTemplate", "Out-of-Scope Work documented: {{items}};"), { items: [...new Set(out)].join(", ") }) : "";
-  $("resultText").value = `${buildHeader()}\n\n${dropLine}\n${tici()};\n${tpl(rep("ontMountedTemplate", "ONT mounted on the wall:{{value}};"), { value: checked("ontWallMountedCheck") ? "yes" : "no" })}\n${tpl(rep("equipmentPlacementTemplate"), { eeroModel })}\n${tpl(rep("speedTestTemplate"), { speedResult })}\n${addItems.join("\n")}\n${rep("cat6RunsBase", "Cat6 Runs: run 1 included Ethernet line")};\n${rep("siliconeLine", "Silicone at Entry: Yes;")}\n${tpl(rep("eerosTemplate"), { eeroQty, eeroModel })}\n${tpl(rep("verifiedTemplate"), { cust: val("customerName").toUpperCase() })}\n${outLine}\n${rep("additionalComments", "Additional Comments: Installed main eero, checked connectivity.")}\n\n${rep("stackableHeader", "Stackable codes used :")}\n${stack.join("\n")}`.trim();
+  const troubleBlock = troubleLines.length ? `${[...new Set(troubleLines)].join("\n")}\n` : "";
+  $("resultText").value = `${buildHeader()}\n\n${dropLine}\n${tici()};\n${tpl(rep("ontMountedTemplate", "ONT mounted on the wall:{{value}};"), { value: checked("ontWallMountedCheck") ? "yes" : "no" })}\n${tpl(rep("equipmentPlacementTemplate"), { eeroModel })}\n${tpl(rep("speedTestTemplate"), { speedResult })}\n${addItems.join("\n")}\n${rep("cat6RunsBase", "Cat6 Runs: run 1 included Ethernet line")};\n${troubleBlock}${rep("siliconeLine", "Silicone at Entry: Yes;")}\n${tpl(rep("eerosTemplate"), { eeroQty, eeroModel })}\n${tpl(rep("verifiedTemplate"), { cust: val("customerName").toUpperCase() })}\n${outLine}\n${rep("additionalComments", "Additional Comments: Installed main eero, checked connectivity.")}\n\n${rep("stackableHeader", "Stackable codes used :")}\n${stack.join("\n")}`.trim();
 }
 
 function saveState() {
   localStorage.setItem("tech_calc_state", JSON.stringify({
     fields: ["techName", "crissId", "callId", "customerName", "fullAddress", "phoneNumber", "btnNumber", "speedTier", "eeroQty"].reduce((o, id) => (o[id] = $(id)?.value || "", o), {}),
     checks: ["unbreakableCheck", "wholeHomeCheck", "ibobCheck", "ontWallMountedCheck"].reduce((o, id) => (o[id] = checked(id), o), {}),
-    rows: rows().map(r => ({ code: r.code, qty: r.qty }))
+    rows: rows().map(r => ({ code: r.code, qty: r.qty, trouble: r.trouble }))
   }));
 }
 
@@ -240,7 +275,16 @@ async function handleOcr(file) {
 }
 
 function bindEvents() {
-  document.body.addEventListener("input", e => { if (e.target.matches("input,textarea,select")) { const id = e.target.id || ""; if (id.startsWith("select-") || id.startsWith("qty-") || id.startsWith("f0")) updateRow((e.target.dataset.id || id.split("-")[1] || e.target.closest("tr")?.id.split("-")[1])); else { generateReport(); saveState(); } } });
+  document.body.addEventListener("input", e => {
+    if (!e.target.matches("input,textarea,select")) return;
+    const id = e.target.id || "";
+    if (id.startsWith("select-") || id.startsWith("qty-") || id.startsWith("f0")) {
+      updateRow((e.target.dataset.id || id.split("-")[1] || e.target.closest("tr")?.id.split("-")[1]));
+    } else {
+      generateReport();
+      saveState();
+    }
+  });
   document.body.addEventListener("click", e => {
     const del = e.target.dataset.del; if (del) { $(`row-${del}`)?.remove(); calculateTotal(); generateReport(); saveState(); updateCopyButtons(); }
     const qty = e.target.dataset.qty; if (qty) { const i = $(`qty-${qty}`); i.value = Math.max(0, Number(i.value || 0) + Number(e.target.dataset.delta || 0)); updateRow(qty); }
