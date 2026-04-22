@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create brands.xlsx</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+body{font-family:Segoe UI,Arial,sans-serif;background:#18345e;color:#17304f;margin:0;padding:20px}.box{max-width:760px;margin:0 auto;background:#fff;border-radius:22px;padding:24px;box-shadow:0 20px 45px rgba(0,0,0,.25)}h1{margin-top:0}button{min-height:48px;border:0;border-radius:14px;background:#315ea8;color:#fff;font-size:16px;font-weight:800;padding:0 18px}code{background:#edf4ff;padding:3px 7px;border-radius:7px}.hint{color:#56708f;line-height:1.55}.columns{background:#f6f8fc;border:1px solid #d9e1f0;border-radius:14px;padding:12px;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>Створити brands.xlsx</h1>
+<p class="hint">Натисни кнопку — браузер скачає готовий Excel шаблон. Потім завантаж цей файл у GitHub/uCoz папку <code>line</code> з назвою <code>brands.xlsx</code>.</p>
+<div class="columns">
+<b>Колонки Excel:</b><br>
+id, brand, category, country, price, description, image, link, active, sort
+</div>
+<button id="downloadBtn">Download brands.xlsx</button>
+<p class="hint">Головний сайт читає лист <code>brands</code>. Якщо такого листа нема, він читає перший лист Excel.</p>
+</div>
+<script>
+const rows = [
+  { id: 1, brand: "Frontier", category: "Internet", country: "USA", price: "", description: "Internet provider / service brand", image: "", link: "", active: "yes", sort: 1 },
+  { id: 2, brand: "Eero", category: "Router", country: "USA", price: "", description: "WiFi router brand", image: "", link: "", active: "yes", sort: 2 },
+  { id: 3, brand: "Nokia", category: "ONT", country: "Finland", price: "", description: "ONT / network hardware", image: "", link: "", active: "yes", sort: 3 }
+];
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb, ws, "brands");
+  XLSX.writeFile(wb, "brands.xlsx");
+});
+</script>
+</body>
+</html>
