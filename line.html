@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Line Brands Excel Parser</title>
+  <link rel="stylesheet" href="line-style.css?v=20260422-1">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="line-app.js?v=20260422-1" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Line Excel база</p>
+        <h1>Line Brands Parser</h1>
+        <p class="subtitle">Дані брендів читаються з файлу <b>line-brands.xlsx</b> через JavaScript.</p>
+      </div>
+      <a class="template-link" href="line-template.html">Створити Excel шаблон</a>
+    </header>
+
+    <section class="panel controls">
+      <label class="search-box">
+        <span>Пошук</span>
+        <input id="searchInput" type="search" placeholder="Назва, категорія, країна...">
+      </label>
+      <label class="file-box">
+        <span>Завантажити Excel вручну</span>
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv">
+      </label>
+      <button id="reloadBtn" type="button">Оновити з line-brands.xlsx</button>
+    </section>
+
+    <section class="status" id="statusBox">Завантажую Excel...</section>
+    <section class="stats" id="statsBox"></section>
+    <section class="grid" id="brandGrid"></section>
+
+    <section class="panel table-panel">
+      <h2>Таблиця брендів</h2>
+      <div class="table-wrap">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
